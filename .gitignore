@@ -1,0 +1,18 @@
+# Ignore Gradle build files
+build/
+.gradle/
+
+# Ignore app/build generated files
+app/build/
+
+# Ignore local.properties file
+local.properties
+
+# Ignore .idea files
+.idea/
+
+# Ignore .iml files
+*.iml
+
+# Ignore .DS_Store files
+.DS_Store
