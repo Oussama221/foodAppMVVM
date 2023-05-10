@@ -1,5 +1,7 @@
 package com.bib.metoapplication.retrofit
 
+import com.bib.metoapplication.pojo.CategoryList
+import com.bib.metoapplication.pojo.CategoryMeals
 import com.bib.metoapplication.pojo.MealList
 import retrofit2.Call
 import retrofit2.http.GET
@@ -11,5 +13,8 @@ interface MealAPI {
 
     @GET("lookup.php?")
     fun getMealById(@Query("i") id:String) : Call<MealList>
+
+    @GET("filter.php?")
+    fun getPopularItems(@Query("c") categoryName: String) : Call<CategoryList>
 
 }
