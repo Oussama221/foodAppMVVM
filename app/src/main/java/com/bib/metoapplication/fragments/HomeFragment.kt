@@ -54,7 +54,17 @@ class HomeFragment : Fragment() {
         homeMvvm.getPopularMeals()
 
         observePopularItems()
+        onPopularItemClick()
+    }
 
+    private fun onPopularItemClick() {
+        popularItemsAdapter.onItemClick = {categoryMeals ->
+            val intent = Intent(activity,MealActivity::class.java)
+            intent.putExtra(MEAL_ID,categoryMeals.idMeal)
+            intent.putExtra(MEAL_NAME,categoryMeals.strMeal)
+            intent.putExtra(MEAL_THUMB,categoryMeals.strMealThumb)
+            startActivity(intent)
+        }
     }
 
     private fun preparePopularItemsRecyclerView() {
