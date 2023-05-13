@@ -1,5 +1,6 @@
 package com.bib.metoapplication.retrofit
 
+import com.bib.metoapplication.pojo.AllCategoriesList
 import com.bib.metoapplication.pojo.CategoryList
 import com.bib.metoapplication.pojo.CategoryMeals
 import com.bib.metoapplication.pojo.MealList
@@ -16,5 +17,8 @@ interface MealAPI {
 
     @GET("filter.php?")
     fun getPopularItems(@Query("c") categoryName: String) : Call<CategoryList>
+
+    @GET("categories.php")
+    fun getAllCategories() : Call<AllCategoriesList>
 
 }
