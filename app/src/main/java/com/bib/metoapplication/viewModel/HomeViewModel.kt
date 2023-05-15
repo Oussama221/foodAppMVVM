@@ -17,6 +17,7 @@ class HomeViewModel():ViewModel() {
     private var popularItemsLiveData = MutableLiveData<List<CategoryMeals>>()
     private var AllCategoryLiveData = MutableLiveData<List<Category>>()
 
+
     fun getRundomMeal(){
         RetrofitInstance.api.getRandomMeal().enqueue(object : Callback<MealList> {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
@@ -52,6 +53,7 @@ class HomeViewModel():ViewModel() {
 
         })
     }
+
    fun getPopularMeals(){
        RetrofitInstance.api.getPopularItems("Seafood").enqueue(object :Callback<CategoryList>{
            override fun onResponse(call: Call<CategoryList>, response: Response<CategoryList>) {

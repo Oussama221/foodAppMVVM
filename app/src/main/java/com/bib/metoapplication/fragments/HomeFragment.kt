@@ -7,25 +7,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bib.metoapplication.R
+import com.bib.metoapplication.activities.CategoryMealsActivity
 import com.bib.metoapplication.activities.MealActivity
 import com.bib.metoapplication.adapters.CategoryAdapter
 import com.bib.metoapplication.adapters.MostPopularAdapter
 import com.bib.metoapplication.databinding.FragmentHomeBinding
 import com.bib.metoapplication.pojo.*
-import com.bib.metoapplication.retrofit.RetrofitInstance
 import com.bib.metoapplication.viewModel.HomeViewModel
 import com.bumptech.glide.Glide
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -38,6 +32,7 @@ class HomeFragment : Fragment() {
         const val MEAL_ID = "com.bib.metoapplication.fragments.mealId"
         const val MEAL_NAME = "com.bib.metoapplication.fragments.mealName"
         const val MEAL_THUMB = "com.bib.metoapplication.fragments.mealThumb"
+        const val CATEGORY_NAME = "com.bib.metoapplication.fragments.categoryName"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +56,16 @@ class HomeFragment : Fragment() {
         homeMvvm.getAllCategories()
         observeAllCategories()
         prepareCategoriesRecyclerView()
+
+        onCategoryClick()
+    }
+
+    private fun onCategoryClick() {
+        categoryAdapter.onItemClick ={
+            category ->  val intent = Intent(activity,CategoryMealsActivity::class.java)
+            intent.putExtra(CATEGORY_NAME,category.strCategory)
+            startActivity(intent)
+        }
     }
 
     private fun prepareCategoriesRecyclerView() {

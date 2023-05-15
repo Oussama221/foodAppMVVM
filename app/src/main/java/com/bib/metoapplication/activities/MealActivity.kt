@@ -16,12 +16,14 @@ import com.bib.metoapplication.viewModel.MealViewModel
 import com.bumptech.glide.Glide
 
 class MealActivity : AppCompatActivity() {
+
 private lateinit var mealId:String
 private lateinit var mealName:String
 private lateinit var mealThumb:String
 private lateinit var binding: ActivityMealBinding
 private lateinit var mealMVVM : MealViewModel
 private lateinit var youtubeLink : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMealBinding.inflate(layoutInflater)
