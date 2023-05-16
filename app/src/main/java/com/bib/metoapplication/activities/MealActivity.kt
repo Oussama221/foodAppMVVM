@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bib.metoapplication.R
 import com.bib.metoapplication.databinding.ActivityMealBinding
+import com.bib.metoapplication.db.MealDataBase
 import com.bib.metoapplication.fragments.HomeFragment
 import com.bib.metoapplication.pojo.Meal
 import com.bib.metoapplication.viewModel.MealViewModel
+import com.bib.metoapplication.viewModel.MealViewModelFactory
 import com.bumptech.glide.Glide
 
 class MealActivity : AppCompatActivity() {
@@ -28,13 +31,27 @@ private lateinit var youtubeLink : String
         super.onCreate(savedInstanceState)
         binding = ActivityMealBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mealMVVM =ViewModelProvider(this).get(MealViewModel::class.java)
+
+        val mealDataBase = MealDataBase.getInstance(this)
+        val viewModelFactory = MealViewModelFactory(mealDataBase)
+       mealMVVM = ViewModelProvider(this,viewModelFactory)[MealViewModel::class.java]
         loadingCase()
         getMealInformationFromIntent()
         bindingView()
         mealMVVM.getMealDetails(mealId)
         ObserveMealDetailsLiveData()
         OnYoutubeImageClick()
+        onFavoriteClick()
+    }
+
+    private fun onFavoriteClick() {
+            binding.btnAddFavorite.setOnClickListener {
+               mealToSave?.let {
+                   mealMVVM.insertMeal(it)
+                   Toast.makeText(this,"Meal Saved",Toast.LENGTH_SHORT)
+                   Log.d("meal Saved",""+it.idMeal)
+               }
+            }
     }
 
     private fun OnYoutubeImageClick() {
@@ -54,15 +71,17 @@ private lateinit var youtubeLink : String
 
 
     }
+    private var mealToSave:Meal ?= null
     fun ObserveMealDetailsLiveData() {
         mealMVVM.observeMealDetailsLiveData().observe(this,object :Observer<Meal>{
             override fun onChanged(t: Meal?) {
                // TODO("Not yet implemented")
                 onResponseCase()
+                mealToSave = t
                 binding.tvCategory.text = "Category : ${t!!.strCategory}"
                 binding.tvArea.text = "Area : ${t!!.strArea}"
                 binding.contentIns.text = t!!.strInstructions
-                youtubeLink = t!!.strYoutube
+                youtubeLink = t.strYoutube!!
             }
 
         })

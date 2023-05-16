@@ -1,8 +1,10 @@
 package com.bib.metoapplication.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bib.metoapplication.R
@@ -25,11 +27,31 @@ class CategoryMealsActivity : AppCompatActivity() {
         mealsByCategoryAdapter = MealsByCategoryAdapter()
         getMealByCategoryFromIntent()
         prepareRvMealsByCategory()
-
+        loadingCase()
         getMealsByCategory()
         observeMealsByCategory()
 
+        onItemClick()
+    }
 
+    private fun loadingCase() {
+        binding.progressIndicator.visibility = View.VISIBLE
+        binding.rvMealsByCategory.visibility = View.INVISIBLE
+        binding.categoryNameAndAccount.visibility = View.INVISIBLE
+    }
+    private fun bindViews(){
+        binding.progressIndicator.visibility = View.INVISIBLE
+        binding.rvMealsByCategory.visibility = View.VISIBLE
+        binding.categoryNameAndAccount.visibility = View.VISIBLE
+    }
+    private fun onItemClick() {
+        mealsByCategoryAdapter.onItemClick = {
+            val intent = Intent(applicationContext,MealActivity::class.java)
+            intent.putExtra(HomeFragment.MEAL_NAME,it.strMeal)
+            intent.putExtra(HomeFragment.MEAL_THUMB,it.strMealThumb)
+            intent.putExtra(HomeFragment.MEAL_ID,it.idMeal)
+            startActivity(intent)
+        }
     }
 
     private fun prepareRvMealsByCategory() {
@@ -46,6 +68,7 @@ class CategoryMealsActivity : AppCompatActivity() {
                 mealByCategoryList ->
             mealsByCategoryAdapter.setMealsByCategory(mealByCategoryList as ArrayList<MealByCateory> /* = java.util.ArrayList<com.bib.metoapplication.pojo.MealByCateory> */)
             Log.i("size Of Meel",""+mealByCategoryList.size)
+            bindViews()
             binding.categoryNameAndAccount.text = "${categoryName} : ${mealByCategoryList.size}"
             mealByCategoryList.forEach {
                 Log.d("Meals By Category ",""+it.strMeal)

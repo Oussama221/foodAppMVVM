@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bib.metoapplication.activities.CategoryMealsActivity
+import com.bib.metoapplication.activities.MainActivity
 import com.bib.metoapplication.activities.MealActivity
 import com.bib.metoapplication.adapters.CategoryAdapter
 import com.bib.metoapplication.adapters.MostPopularAdapter
@@ -23,7 +24,7 @@ import com.bumptech.glide.Glide
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var homeMvvm:HomeViewModel
+    private lateinit var viewModel:HomeViewModel
     private lateinit var randomMeal: Meal
     private lateinit var popularItemsAdapter: MostPopularAdapter
     private lateinit var categoryAdapter: CategoryAdapter
@@ -37,7 +38,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeMvvm = ViewModelProvider(this).get(HomeViewModel::class.java)
+       // homeMvvm = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = (activity as MainActivity).viewModel
         popularItemsAdapter = MostPopularAdapter()
         categoryAdapter = CategoryAdapter()
     }
@@ -45,15 +47,15 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preparePopularItemsRecyclerView()
-        homeMvvm.getRundomMeal()
+        viewModel.getRundomMeal()
         observeRandomMeal()
         onRandomMealClick()
-        homeMvvm.getPopularMeals()
+        viewModel.getPopularMeals()
 
         observePopularItems()
         onPopularItemClick()
 
-        homeMvvm.getAllCategories()
+        viewModel.getAllCategories()
         observeAllCategories()
         prepareCategoriesRecyclerView()
 
@@ -76,7 +78,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeAllCategories() {
-       homeMvvm.observeAllCategories().observe(viewLifecycleOwner,object :Observer<List<Category>>{
+       viewModel.observeAllCategories().observe(viewLifecycleOwner,object :Observer<List<Category>>{
            override fun onChanged(t: List<Category>?) {
                categoryAdapter.setCategories(t as ArrayList<Category> /* = java.util.ArrayList<com.bib.metoapplication.pojo.Category> */)
                 t!!.forEach { category ->
@@ -114,7 +116,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observePopularItems(){
-        homeMvvm.observePopularMealLiveData().observe(viewLifecycleOwner,object :Observer<List<CategoryMeals>>{
+        viewModel.observePopularMealLiveData().observe(viewLifecycleOwner,object :Observer<List<CategoryMeals>>{
             override fun onChanged(t: List<CategoryMeals>?) {
                 popularItemsAdapter.setMeals( t as ArrayList<CategoryMeals>)
             }
@@ -122,7 +124,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeRandomMeal() {
-        homeMvvm.observeRandomMealLiveData().observe(viewLifecycleOwner,object :Observer<Meal>{
+        viewModel.observeRandomMealLiveData().observe(viewLifecycleOwner,object :Observer<Meal>{
             override fun onChanged(t: Meal?) {
                 Glide.with(this@HomeFragment).load(t!!.strMealThumb).into(binding.imgRandom)
                 randomMeal = t

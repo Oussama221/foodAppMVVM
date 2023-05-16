@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bib.metoapplication.db.MealDataBase
 import com.bib.metoapplication.pojo.*
 import com.bib.metoapplication.retrofit.RetrofitInstance
 import com.bumptech.glide.Glide
@@ -11,12 +12,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HomeViewModel():ViewModel() {
+class HomeViewModel( private val mealDataBase: MealDataBase):ViewModel() {
 
     private var randomMealLiveData =  MutableLiveData<Meal>()
     private var popularItemsLiveData = MutableLiveData<List<CategoryMeals>>()
     private var AllCategoryLiveData = MutableLiveData<List<Category>>()
-
+    private var favoriteMealLiveData = mealDataBase.mealDao().getAllMeals()
 
     fun getRundomMeal(){
         RetrofitInstance.api.getRandomMeal().enqueue(object : Callback<MealList> {
@@ -77,6 +78,10 @@ class HomeViewModel():ViewModel() {
 
     public  fun observeAllCategories(): LiveData<List<Category>>{
         return AllCategoryLiveData
+    }
+
+    public fun observeFavoriteMeal() : LiveData<List<Meal>>{
+        return favoriteMealLiveData
     }
 }
 
