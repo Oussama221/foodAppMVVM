@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bib.metoapplication.R
 import com.bib.metoapplication.activities.MainActivity
 import com.bib.metoapplication.adapters.FavoriteMealsAdapter
 import com.bib.metoapplication.databinding.FragmentFavoriteBinding
 import com.bib.metoapplication.pojo.Meal
 import com.bib.metoapplication.viewModel.HomeViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class FavoriteFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteBinding
@@ -40,6 +43,29 @@ class FavoriteFragment : Fragment() {
 
         observeLiveData()
         prepareRV()
+
+        val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
+
+        ){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position =viewHolder.adapterPosition
+                viewModel.deleteMeal(favoriteMealsAdapter.differ.currentList[position])
+
+                Snackbar.make(requireView(),"Meal deleted",Snackbar.LENGTH_SHORT).show()
+            }
+
+        }
+        ItemTouchHelper(itemTouchHelper).attachToRecyclerView(binding.rvFavorite)
     }
 
     private fun prepareRV() {

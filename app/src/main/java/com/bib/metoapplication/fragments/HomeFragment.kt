@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bib.metoapplication.R
 import com.bib.metoapplication.activities.CategoryMealsActivity
 import com.bib.metoapplication.activities.MainActivity
 import com.bib.metoapplication.activities.MealActivity
@@ -60,6 +62,23 @@ class HomeFragment : Fragment() {
         prepareCategoriesRecyclerView()
 
         onCategoryClick()
+        onLongItemClick()
+
+        onSearchIconClicked()
+    }
+
+    private fun onSearchIconClicked() {
+        binding.searchImg.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
+    }
+
+
+    private fun onLongItemClick() {
+        popularItemsAdapter.onLongItemClick= {
+            val bottomSheetMealFragment = BottomSheetMealFragment.newInstance(it.idMeal)
+            bottomSheetMealFragment.show(childFragmentManager,"Meal info")
+        }
     }
 
     private fun onCategoryClick() {

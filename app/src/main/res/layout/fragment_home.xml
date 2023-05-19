@@ -29,6 +29,7 @@
                     android:fontFamily="@font/myfont"
                     android:text="Home"/>
             <ImageView
+                    android:id="@+id/searchImg"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="@dimen/_7sdp"

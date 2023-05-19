@@ -45,11 +45,7 @@ class MealViewModel(
         }
     }
 
-    fun deleteMeal(meal: Meal){
-        viewModelScope.launch {
-            mealDataBase.mealDao().deleteMeal(meal)
-        }
-    }
+
 
 
 }

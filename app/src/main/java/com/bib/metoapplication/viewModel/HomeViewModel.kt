@@ -1,13 +1,16 @@
 package com.bib.metoapplication.viewModel
 
+import android.icu.text.StringSearch
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bib.metoapplication.db.MealDataBase
 import com.bib.metoapplication.pojo.*
 import com.bib.metoapplication.retrofit.RetrofitInstance
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,6 +21,8 @@ class HomeViewModel( private val mealDataBase: MealDataBase):ViewModel() {
     private var popularItemsLiveData = MutableLiveData<List<CategoryMeals>>()
     private var AllCategoryLiveData = MutableLiveData<List<Category>>()
     private var favoriteMealLiveData = mealDataBase.mealDao().getAllMeals()
+    private var bottomSheetMealLiveData = MutableLiveData<Meal>()
+    private val searchMealLiveData = MutableLiveData<List<Meal>>()
 
     fun getRundomMeal(){
         RetrofitInstance.api.getRandomMeal().enqueue(object : Callback<MealList> {
@@ -33,7 +38,7 @@ class HomeViewModel( private val mealDataBase: MealDataBase):ViewModel() {
             }
 
             override fun onFailure(call: Call<MealList>, t: Throwable) {
-                TODO("Not yet implemented")
+               // TODO("Not yet implemented")
                 Log.i("error",""+t.toString())
             }
         })
@@ -69,6 +74,36 @@ class HomeViewModel( private val mealDataBase: MealDataBase):ViewModel() {
 
        })
    }
+
+    public fun getMealById(id:String){
+        RetrofitInstance.api.getMealById(id).enqueue(object : Callback<MealList>{
+            override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
+                val meal = response.body()?.meals?.first()
+                meal?.let {
+                    bottomSheetMealLiveData.postValue(it)
+                }
+            }
+
+            override fun onFailure(call: Call<MealList>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
+    fun searchMeal(search: String) = RetrofitInstance.api.getMealByName(search).enqueue(object : Callback<MealList>{
+        override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
+            val mealList = response.body()?.meals
+            mealList.let {
+                searchMealLiveData.postValue(it)
+            }
+        }
+
+        override fun onFailure(call: Call<MealList>, t: Throwable) {
+            TODO("Not yet implemented")
+        }
+
+    })
     public fun observeRandomMealLiveData():LiveData<Meal>{
         return randomMealLiveData
     }
@@ -82,6 +117,19 @@ class HomeViewModel( private val mealDataBase: MealDataBase):ViewModel() {
 
     public fun observeFavoriteMeal() : LiveData<List<Meal>>{
         return favoriteMealLiveData
+    }
+
+    public fun observeBottomSheetMealById() : LiveData<Meal>{
+        return bottomSheetMealLiveData
+    }
+
+    public fun observeSearchMealLiveData() : LiveData<List<Meal>>{
+        return searchMealLiveData
+    }
+    fun deleteMeal(meal: Meal){
+        viewModelScope.launch {
+            mealDataBase.mealDao().deleteMeal(meal)
+        }
     }
 }
 
